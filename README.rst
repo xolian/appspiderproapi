@@ -31,4 +31,4 @@ Found something that doesn't seem right or have a feature request? `Please open 
 
 License
 ~~~~~~~~~~~~~~~~~~~~~
-.. image:: https://img.shields.io/github/license/target/webinspectapi.svg?style=flat-square
+.. image:: https://img.shields.io/github/license/xolian/appspiderproapi.svg?style=flat-square
