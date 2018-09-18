@@ -20,7 +20,6 @@ class AppSpiderProApi(object):
     def __init__(self, host, username=None, password=None, token=None, verify_ssl=True, timeout=60, user_agent=None,
                  client_version='0.0.1b'):
 
-
         self.host = host
         self.username = username
         self.password = password
@@ -47,37 +46,59 @@ class AppSpiderProApi(object):
 
     def create_scan(self):
         """
-        :param: TBD
-        :return: Launches a scan with AppSpider Pro scanner.
+        :return: Saves scan configuration, returns a new scan token. (parameter scanConfigXml is base 64 encoded xml
+        configuration file).  Returning a token value on the response
         """
-        pass
+        return self._request('POST', '/appspider/v1/scans')
 
-    def download_scan(self):
+    def start_scan(self, scanId):
         """
-        :param: TBD
-        :return: Download a scan file from AppSpider Pro scanner..
+        :param: scanId
+        :return: Puts an action for the scan (START, PAUSE, STOP, RESUME, REGENERATE, AUTHENTICATE, VERIFY)
+        :body param: action - one of these values start, pause, resume, stop, regenerate or verify
+        generateReport - indicates whether to generate report with action STOP.
+        This parameter is ignored for other scan actions.
         """
-        pass
+        return self._request('PUT', '/appspider/v1/scans/' + str(scanId) + '?action=start')
+
+    def stop_scan(self, scanId):
+        """
+        :param: scanId
+        :return: Puts an action for the scan (START, PAUSE, STOP, RESUME, REGENERATE, AUTHENTICATE, VERIFY)
+        :body param: action - one of these values start, pause, resume, stop, regenerate or verify
+        generateReport - indicates whether to generate report with action STOP.
+        This parameter is ignored for other scan actions.
+        """
+        return self._request('PUT', '/appspider/v1/scans/' + str(scanId) + '?action=stop')
+
+    def scan_status(self, scanId):
+        """
+        :param scanId:
+        :return: Gets the status of the scan. Possible scan's State values are pending, running, scanned, crashed,
+         regenerating, canceled, paused.
+        """
+
+        return self._request('GET', '/appspider/v1/scans/' + str(scanId))
+
+    def download_scan(self, scanId):
+        """
+        :param: scanId, ifinding
+        :return: Gets vulnerability finding xml. This endpoint returns results only before the scan completes.
+        """
+        return self._request('GET', '/appspider/v1/finding/' + str(scanId) + '?ifinding=1?json=true')
 
     def list_scans(self):
         """
-        :param: TBD
-        :return: List scan status from AppSpider Pro scanner..
+        :return: Returns a complete list of running scans with token name of scanIds
         """
-        pass
+        return self._request('GET', '/appspider/v1/scans')
 
-    def stop_scan(self):
+    def delete_scan(self, scanId):
         """
-        :param: TBD
-        :return: Stop running scan from AppSpider Pro scanner.
-        """
-        pass
-
-    def delete_scan(self):
-        """
-        :param TBD:
+        :param scanId
         :return: Delete scan from AppSpider Pro scanner
         """
+        return self._request('DELETE', '/appspider/v1/scans/' + str(scanId))
 
     def _request(self, method, url, params=None, files=None, data=None, headers=None):
         """Common handler for all HTTP requests."""
